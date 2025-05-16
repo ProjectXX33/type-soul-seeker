@@ -1,20 +1,64 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Radio } from "lucide-react";
-import { calculateMbtiType } from "@/utils/mbtiUtils";
+import { Input } from "@/components/ui/input";
+import { calculateMbtiType, saveTestResult } from "@/utils/mbtiUtils";
 import { questions } from "@/data/mbtiQuestions";
+import { useToast } from "@/hooks/use-toast";
 
 interface MbtiTestProps {
-  onCompleteTest: (mbtiType: string, description: string) => void;
+  onCompleteTest: (mbtiType: string, description: string, dimensionScores: any) => void;
 }
 
 const MbtiTest = ({ onCompleteTest }: MbtiTestProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [userCode, setUserCode] = useState<string>("");
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  // Check for saved progress on component mount
+  useEffect(() => {
+    const savedProgress = localStorage.getItem("mbtiTestProgress");
+    if (savedProgress) {
+      try {
+        const { savedAnswers, savedIndex, savedUserCode } = JSON.parse(savedProgress);
+        setAnswers(savedAnswers || {});
+        setCurrentQuestionIndex(savedIndex || 0);
+        setUserCode(savedUserCode || "");
+        
+        // If there's an answer for the current question, select it
+        if (savedAnswers && savedAnswers[savedIndex]) {
+          setSelectedOption(savedAnswers[savedIndex]);
+        }
+        
+        toast({
+          title: "Test Progress Restored",
+          description: "We've restored your previous progress.",
+        });
+      } catch (error) {
+        console.error("Error restoring progress:", error);
+      }
+    }
+  }, []);
+
+  // Save progress when answers change
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      localStorage.setItem(
+        "mbtiTestProgress",
+        JSON.stringify({
+          savedAnswers: answers,
+          savedIndex: currentQuestionIndex,
+          savedUserCode: userCode,
+        })
+      );
+    }
+  }, [answers, currentQuestionIndex, userCode]);
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
@@ -23,16 +67,26 @@ const MbtiTest = ({ onCompleteTest }: MbtiTestProps) => {
   const handleNext = () => {
     if (selectedOption) {
       // Save the answer
-      setAnswers({ ...answers, [currentQuestionIndex]: selectedOption });
+      const updatedAnswers = { ...answers, [currentQuestionIndex]: selectedOption };
+      setAnswers(updatedAnswers);
       
       // Move to next question or complete the test
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedOption(null);
+        setSelectedOption(answers[currentQuestionIndex + 1] || null);
       } else {
-        // Calculate the results
-        const result = calculateMbtiType(answers);
-        onCompleteTest(result.type, result.description);
+        // Calculate the results and complete the test
+        const result = calculateMbtiType(updatedAnswers);
+        
+        // Clear saved progress
+        localStorage.removeItem("mbtiTestProgress");
+        
+        // Save result if user provided a code
+        if (userCode.trim()) {
+          saveTestResult(userCode, updatedAnswers);
+        }
+        
+        onCompleteTest(result.type, result.description, result.dimensionScores);
       }
     }
   };
@@ -42,6 +96,34 @@ const MbtiTest = ({ onCompleteTest }: MbtiTestProps) => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       setSelectedOption(answers[currentQuestionIndex - 1] || null);
     }
+  };
+
+  const handleSaveAndExit = () => {
+    setIsSaving(true);
+    // Save current progress and generate a recovery code
+    const recoveryCode = userCode || `mbti-${Math.random().toString(36).substring(2, 8)}`;
+    
+    // Update userCode if not set yet
+    if (!userCode) {
+      setUserCode(recoveryCode);
+    }
+    
+    // Save the progress with the code
+    localStorage.setItem(
+      "mbtiTestProgress",
+      JSON.stringify({
+        savedAnswers: answers,
+        savedIndex: currentQuestionIndex,
+        savedUserCode: recoveryCode,
+      })
+    );
+    
+    toast({
+      title: "Progress Saved",
+      description: `Use this code to resume later: ${recoveryCode}`,
+    });
+    
+    setIsSaving(false);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -86,8 +168,19 @@ const MbtiTest = ({ onCompleteTest }: MbtiTestProps) => {
               </div>
             ))}
           </div>
+          
+          {/* User Code Input */}
+          <div className="mt-6">
+            <p className="text-sm text-gray-500 mb-2">Enter a unique code to save/resume your progress later:</p>
+            <Input
+              placeholder="Your unique code (optional)"
+              value={userCode}
+              onChange={(e) => setUserCode(e.target.value)}
+              className="max-w-md"
+            />
+          </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex flex-wrap gap-2 justify-between">
           <Button
             variant="outline"
             onClick={handlePrevious}
@@ -95,6 +188,16 @@ const MbtiTest = ({ onCompleteTest }: MbtiTestProps) => {
           >
             Previous
           </Button>
+          
+          <Button
+            variant="outline"
+            onClick={handleSaveAndExit}
+            disabled={Object.keys(answers).length === 0}
+            className="text-purple-600 border-purple-200"
+          >
+            Save & Exit
+          </Button>
+          
           <Button
             onClick={handleNext}
             disabled={!selectedOption}

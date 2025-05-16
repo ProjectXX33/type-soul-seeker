@@ -39,6 +39,23 @@ export const calculateMbtiType = (answers: Record<number, string>) => {
 
   const mbtiType = `${firstLetter}${secondLetter}${thirdLetter}${fourthLetter}`;
 
+  // Calculate percentages for each dimension
+  const total = e + i;
+  const ePercentage = total > 0 ? Math.round((e / total) * 100) : 0;
+  const iPercentage = total > 0 ? Math.round((i / total) * 100) : 0;
+  
+  const sNTotal = s + n;
+  const sPercentage = sNTotal > 0 ? Math.round((s / sNTotal) * 100) : 0;
+  const nPercentage = sNTotal > 0 ? Math.round((n / sNTotal) * 100) : 0;
+  
+  const tFTotal = t + f;
+  const tPercentage = tFTotal > 0 ? Math.round((t / tFTotal) * 100) : 0;
+  const fPercentage = tFTotal > 0 ? Math.round((f / tFTotal) * 100) : 0;
+  
+  const jPTotal = j + p;
+  const jPercentage = jPTotal > 0 ? Math.round((j / jPTotal) * 100) : 0;
+  const pPercentage = jPTotal > 0 ? Math.round((p / jPTotal) * 100) : 0;
+
   // Get the description and other data for this type
   const typeData = personalityTypes[mbtiType as keyof typeof personalityTypes] || {
     name: "Unknown",
@@ -48,6 +65,51 @@ export const calculateMbtiType = (answers: Record<number, string>) => {
 
   return {
     type: mbtiType,
-    description: typeData.description
+    description: typeData.description,
+    dimensionScores: {
+      ei: { e: ePercentage, i: iPercentage },
+      sn: { s: sPercentage, n: nPercentage },
+      tf: { t: tPercentage, f: fPercentage },
+      jp: { j: jPercentage, p: pPercentage }
+    },
+    raw: {
+      e, i, s, n, t, f, j, p
+    }
   };
 };
+
+// Function to save test results
+export const saveTestResult = async (userCode: string, answers: Record<number, string>) => {
+  const result = calculateMbtiType(answers);
+  const timestamp = new Date().toISOString();
+  
+  const resultData = {
+    userCode,
+    answers,
+    result,
+    timestamp
+  };
+  
+  // For now, we'll save to localStorage as a placeholder
+  // In a real app, this would be a fetch call to your API
+  try {
+    const existingResults = JSON.parse(localStorage.getItem('mbtiResults') || '[]');
+    existingResults.push(resultData);
+    localStorage.setItem('mbtiResults', JSON.stringify(existingResults));
+    return { success: true, resultData };
+  } catch (error) {
+    console.error('Error saving result:', error);
+    return { success: false, error };
+  }
+};
+
+// Function to get test results (admin only)
+export const getTestResults = () => {
+  try {
+    return JSON.parse(localStorage.getItem('mbtiResults') || '[]');
+  } catch (error) {
+    console.error('Error retrieving results:', error);
+    return [];
+  }
+};
+

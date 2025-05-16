@@ -2,14 +2,23 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { personalityTypes } from "@/data/mbtiTypes";
+import { Progress } from "@/components/ui/progress";
+
+interface DimensionScores {
+  ei: { e: number; i: number };
+  sn: { s: number; n: number };
+  tf: { t: number; f: number };
+  jp: { j: number; p: number };
+}
 
 interface MbtiResultsProps {
   type: string;
   description: string;
+  dimensionScores?: DimensionScores;
   onRetakeTest: () => void;
 }
 
-const MbtiResults = ({ type, description, onRetakeTest }: MbtiResultsProps) => {
+const MbtiResults = ({ type, description, dimensionScores, onRetakeTest }: MbtiResultsProps) => {
   const personalityData = personalityTypes[type as keyof typeof personalityTypes] || {
     name: "Unknown",
     title: "Your results couldn't be determined",
@@ -34,6 +43,66 @@ const MbtiResults = ({ type, description, onRetakeTest }: MbtiResultsProps) => {
         <CardContent className="pt-6">
           <div className="prose max-w-none">
             <p className="text-lg text-gray-700 mb-6">{description}</p>
+            
+            {dimensionScores && (
+              <div className="mb-8">
+                <h3 className="text-xl font-medium text-gray-800 mb-4">Your Dimension Scores</h3>
+                
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-blue-600">Extraversion (E) {dimensionScores.ei.e}%</span>
+                      <span className="text-sm font-medium text-indigo-600">Introversion (I) {dimensionScores.ei.i}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-blue-600 h-2.5 rounded-full" 
+                        style={{ width: `${dimensionScores.ei.e}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-green-600">Sensing (S) {dimensionScores.sn.s}%</span>
+                      <span className="text-sm font-medium text-teal-600">Intuition (N) {dimensionScores.sn.n}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-green-600 h-2.5 rounded-full" 
+                        style={{ width: `${dimensionScores.sn.s}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-amber-600">Thinking (T) {dimensionScores.tf.t}%</span>
+                      <span className="text-sm font-medium text-red-600">Feeling (F) {dimensionScores.tf.f}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-amber-600 h-2.5 rounded-full" 
+                        style={{ width: `${dimensionScores.tf.t}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-purple-600">Judging (J) {dimensionScores.jp.j}%</span>
+                      <span className="text-sm font-medium text-pink-600">Perceiving (P) {dimensionScores.jp.p}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-purple-600 h-2.5 rounded-full" 
+                        style={{ width: `${dimensionScores.jp.j}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="grid md:grid-cols-2 gap-6 mt-8">
               <div className="bg-green-50 p-4 rounded-lg">
@@ -70,9 +139,17 @@ const MbtiResults = ({ type, description, onRetakeTest }: MbtiResultsProps) => {
           <Button
             onClick={onRetakeTest}
             variant="outline"
-            className="border-purple-300 text-purple-700 hover:bg-purple-50"
+            className="border-purple-300 text-purple-700 hover:bg-purple-50 mr-4"
           >
             Take Test Again
+          </Button>
+          
+          <Button
+            onClick={() => window.print()}
+            variant="outline"
+            className="border-blue-300 text-blue-700 hover:bg-blue-50"
+          >
+            Print Results
           </Button>
         </CardFooter>
       </Card>

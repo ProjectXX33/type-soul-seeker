@@ -4,18 +4,23 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useState } from "react";
 import MbtiTest from "@/components/MbtiTest";
 import MbtiResults from "@/components/MbtiResults";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [testStarted, setTestStarted] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
-  const [results, setResults] = useState({ type: "", description: "" });
+  const [results, setResults] = useState({ 
+    type: "", 
+    description: "",
+    dimensionScores: null 
+  });
 
   const handleStartTest = () => {
     setTestStarted(true);
   };
 
-  const handleCompleteTest = (mbtiType: string, description: string) => {
-    setResults({ type: mbtiType, description });
+  const handleCompleteTest = (mbtiType: string, description: string, dimensionScores: any) => {
+    setResults({ type: mbtiType, description, dimensionScores });
     setTestCompleted(true);
     setTestStarted(false);
   };
@@ -28,6 +33,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <Link to="/admin">
+            <Button variant="outline" size="sm" className="text-gray-600">
+              Admin Login
+            </Button>
+          </Link>
+        </div>
+
         {!testStarted && !testCompleted && (
           <Card className="border-none shadow-lg">
             <CardHeader className="text-center">
@@ -77,7 +90,12 @@ const Index = () => {
         {testStarted && <MbtiTest onCompleteTest={handleCompleteTest} />}
 
         {testCompleted && (
-          <MbtiResults type={results.type} description={results.description} onRetakeTest={handleRetakeTest} />
+          <MbtiResults 
+            type={results.type} 
+            description={results.description} 
+            dimensionScores={results.dimensionScores}
+            onRetakeTest={handleRetakeTest} 
+          />
         )}
       </div>
     </div>
