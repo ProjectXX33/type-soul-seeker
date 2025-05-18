@@ -7,6 +7,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
+// Test Pages
+import RiasecTest from "./pages/RiasecTest";
+import GardnerTest from "./pages/GardnerTest";
+import AptitudeMatrix from "./pages/AptitudeMatrix";
+
 // Admin pages
 import AdminIndex from "./pages/admin/AdminIndex";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -24,6 +29,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          
+          {/* Assessment Routes */}
+          <Route path="/riasec" element={<RiasecTest />} />
+          <Route path="/gardner" element={<GardnerTest />} />
+          <Route path="/aptitude-matrix" element={<AptitudeMatrix />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminIndex />} />

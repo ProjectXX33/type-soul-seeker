@@ -33,7 +33,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-purple-800">Personality Assessment Suite</h1>
           <Link to="/admin">
             <Button variant="outline" size="sm" className="text-gray-600">
               Admin Login
@@ -41,61 +42,91 @@ const Index = () => {
           </Link>
         </div>
 
-        {!testStarted && !testCompleted && (
+        {!testStarted && !testCompleted ? (
           <Card className="border-none shadow-lg">
             <CardHeader className="text-center">
               <CardTitle className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                MBTI Personality Test
+                Complete Assessment Journey
               </CardTitle>
               <CardDescription className="mt-4 text-lg text-gray-600">
-                Discover your personality type with our Myers-Briggs Type Indicator assessment
+                Discover yourself through our sequential assessment tests
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <div className="space-y-4">
-                <p className="text-gray-600">
-                  The MBTI assessment helps you understand your psychological preferences in how you perceive the world and make decisions.
-                </p>
-                <div className="flex flex-wrap justify-center gap-6 mt-6">
-                  <div className="bg-purple-50 p-4 rounded-lg text-center w-full sm:w-5/12">
-                    <h3 className="font-medium text-purple-800">Extraversion (E) vs Introversion (I)</h3>
-                    <p className="text-sm text-gray-600">How you focus your attention and energy</p>
-                  </div>
-                  <div className="bg-blue-50 p-4 rounded-lg text-center w-full sm:w-5/12">
-                    <h3 className="font-medium text-blue-800">Sensing (S) vs Intuition (N)</h3>
-                    <p className="text-sm text-gray-600">How you perceive information</p>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg text-center w-full sm:w-5/12">
-                    <h3 className="font-medium text-green-800">Thinking (T) vs Feeling (F)</h3>
-                    <p className="text-sm text-gray-600">How you make decisions</p>
-                  </div>
-                  <div className="bg-amber-50 p-4 rounded-lg text-center w-full sm:w-5/12">
-                    <h3 className="font-medium text-amber-800">Judging (J) vs Perceiving (P)</h3>
-                    <p className="text-sm text-gray-600">How you approach the outside world</p>
-                  </div>
+              <div className="flex flex-col space-y-6 mt-6">
+                <div className="bg-purple-50 p-6 rounded-xl shadow-sm border border-purple-100">
+                  <h3 className="text-xl font-semibold text-purple-800 mb-2">Step 1: MBTI Personality Test</h3>
+                  <p className="text-gray-600 mb-4">Discover your personality type with the Myers-Briggs Type Indicator assessment.</p>
+                  <Button 
+                    onClick={handleStartTest}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                  >
+                    Start MBTI Test
+                  </Button>
+                </div>
+                
+                <div className="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
+                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Step 2: RIASEC Career Test</h3>
+                  <p className="text-gray-600 mb-4">Identify your career interests and matching occupations based on Holland's theory.</p>
+                  <Link to="/riasec">
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                      disabled={!testCompleted}
+                    >
+                      {testCompleted ? "Continue to RIASEC Test" : "Complete MBTI Test First"}
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="bg-green-50 p-6 rounded-xl shadow-sm border border-green-100">
+                  <h3 className="text-xl font-semibold text-green-800 mb-2">Step 3: Multiple Intelligences</h3>
+                  <p className="text-gray-600 mb-4">Explore Gardner's theory of multiple intelligences and discover your unique strengths.</p>
+                  <Link to="/gardner">
+                    <Button 
+                      className="bg-green-600 hover:bg-green-700 text-white px-6"
+                      disabled={!testCompleted}
+                    >
+                      {testCompleted ? "Continue to MI Test" : "Complete Previous Tests First"}
+                    </Button>
+                  </Link>
+                </div>
+                
+                <div className="bg-amber-50 p-6 rounded-xl shadow-sm border border-amber-100">
+                  <h3 className="text-xl font-semibold text-amber-800 mb-2">Step 4: Aptitude Matrix</h3>
+                  <p className="text-gray-600 mb-4">Plot your skills and interests to identify your strengths and areas for growth.</p>
+                  <Link to="/aptitude-matrix">
+                    <Button 
+                      className="bg-amber-600 hover:bg-amber-700 text-white px-6"
+                      disabled={!testCompleted}
+                    >
+                      {testCompleted ? "Continue to Aptitude Matrix" : "Complete Previous Tests First"}
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button
-                onClick={handleStartTest}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-md text-lg"
-              >
-                Start Test
-              </Button>
-            </CardFooter>
           </Card>
-        )}
+        ) : null}
 
         {testStarted && <MbtiTest onCompleteTest={handleCompleteTest} />}
 
         {testCompleted && (
-          <MbtiResults 
-            type={results.type} 
-            description={results.description} 
-            dimensionScores={results.dimensionScores}
-            onRetakeTest={handleRetakeTest} 
-          />
+          <div className="space-y-6">
+            <MbtiResults 
+              type={results.type} 
+              description={results.description} 
+              dimensionScores={results.dimensionScores}
+              onRetakeTest={handleRetakeTest} 
+            />
+            
+            <div className="flex justify-center mt-8">
+              <Link to="/riasec">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Continue to RIASEC Test
+                </Button>
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>

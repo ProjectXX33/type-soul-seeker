@@ -1,0 +1,27 @@
+
+export const skills = [
+  "Public Speaking",
+  "Writing",
+  "Data Analysis",
+  "Graphic Design",
+  "Problem Solving",
+  "Programming",
+  "Leadership",
+  "Customer Service",
+  "Project Management",
+  "Critical Thinking",
+  "Research",
+  "Photography",
+  "Teaching",
+  "Marketing",
+  "Sales",
+  "Negotiation",
+  "Time Management",
+  "Financial Planning",
+  "Video Editing",
+  "Social Media",
+  "Event Planning",
+  "Networking",
+  "Technical Support",
+  "Content Creation"
+];
