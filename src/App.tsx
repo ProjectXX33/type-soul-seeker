@@ -7,11 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-// Test Pages
+// Test Pages in correct sequence
 import RiasecTest from "./pages/RiasecTest";
 import AptitudeMatrix from "./pages/AptitudeMatrix";
 import ValuesTest from "./pages/ValuesTest";
 import GardnerTest from "./pages/GardnerTest";
+import AllResults from "./pages/AllResults";
 
 // Admin pages
 import AdminIndex from "./pages/admin/AdminIndex";
@@ -19,7 +20,6 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminResults from "./pages/admin/AdminResults";
 import AdminResultDetail from "./pages/admin/AdminResultDetail";
 import AdminLayout from "./components/admin/AdminLayout";
-import AllResults from "./pages/AllResults";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +32,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           
-          {/* Assessment Routes - In the correct order: MBTI, RIASEC, Aptitude, Values, Gardner */}
+          {/* Assessment Routes - In the correct order: MBTI (in Index), RIASEC, Aptitude, Values, Gardner */}
           <Route path="/riasec" element={<RiasecTest />} />
           <Route path="/aptitude-matrix" element={<AptitudeMatrix />} />
           <Route path="/values" element={<ValuesTest />} />
