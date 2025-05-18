@@ -30,19 +30,15 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
     rankedValuesByLevel[importanceLevel].push(Number(valueId));
   });
   
-  const handleDragStart = (e: React.DragEvent, valueId: number) => {
-    e.dataTransfer.setData("text/plain", valueId.toString());
+  const handleDragStart = (valueId: number) => {
     dragValue.current = valueId;
   };
   
-  const handleDrop = (e: React.DragEvent, importanceLevel: number) => {
-    e.preventDefault();
-    const valueId = dragValue.current;
-    
-    if (valueId !== null) {
+  const handleDrop = (importanceLevel: number) => {
+    if (dragValue.current !== null) {
       setRankings(prev => ({
         ...prev,
-        [valueId]: importanceLevel
+        [dragValue.current as number]: importanceLevel
       }));
       dragValue.current = null;
     }
@@ -83,7 +79,7 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-black">Values Ranking Exercise</CardTitle>
+          <CardTitle className="text-2xl font-bold text-purple-800">Values Ranking Exercise</CardTitle>
           <CardDescription>
             Drag each value into the column that represents how important it is to you.
           </CardDescription>
@@ -94,7 +90,7 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
             {importanceLevels.map((level) => (
               <div 
                 key={level.level} 
-                className="text-center text-sm font-medium p-2 bg-zinc-100 rounded-t-md"
+                className="text-center text-sm font-medium p-2 bg-gray-100 rounded-t-md"
               >
                 {level.level} – {level.label}
               </div>
@@ -107,13 +103,13 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
               <div
                 key={level.level}
                 className={`min-h-[300px] p-2 rounded-b-md border-2 border-dashed ${
-                  level.level === 5 ? 'border-zinc-500 bg-zinc-50' : 
-                  level.level === 4 ? 'border-zinc-400 bg-zinc-50' : 
-                  level.level === 3 ? 'border-zinc-300 bg-zinc-50' : 
-                  level.level === 2 ? 'border-zinc-200 bg-zinc-50' : 
-                  'border-zinc-100 bg-zinc-50'
+                  level.level === 5 ? 'border-purple-400 bg-purple-50' : 
+                  level.level === 4 ? 'border-blue-400 bg-blue-50' : 
+                  level.level === 3 ? 'border-amber-400 bg-amber-50' : 
+                  level.level === 2 ? 'border-orange-400 bg-orange-50' : 
+                  'border-red-400 bg-red-50'
                 } flex flex-col gap-2`}
-                onDrop={(e) => handleDrop(e, level.level)}
+                onDrop={() => handleDrop(level.level)}
                 onDragOver={handleDragOver}
               >
                 {rankedValuesByLevel[level.level].map((valueId) => {
@@ -142,7 +138,7 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
                   key={value.id}
                   className="bg-white border border-gray-200 p-2 rounded shadow-sm cursor-grab"
                   draggable
-                  onDragStart={(e) => handleDragStart(e, value.id)}
+                  onDragStart={() => handleDragStart(value.id)}
                 >
                   <div className="font-medium">{value.name}</div>
                   <div className="text-xs text-gray-600">{value.description}</div>
@@ -155,7 +151,7 @@ const ValuesTest = ({ onCompleteTest }: ValuesTestProps) => {
             <Button 
               onClick={handleSubmit}
               disabled={unrankedValues.length > 0}
-              className="bg-black hover:bg-zinc-800"
+              className="bg-purple-600 hover:bg-purple-700"
             >
               Submit Values Rankings
             </Button>
