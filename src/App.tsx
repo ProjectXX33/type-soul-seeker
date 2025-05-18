@@ -9,8 +9,8 @@ import NotFound from "./pages/NotFound";
 
 // Test Pages
 import RiasecTest from "./pages/RiasecTest";
-import GardnerTest from "./pages/GardnerTest";
 import AptitudeMatrix from "./pages/AptitudeMatrix";
+import GardnerTest from "./pages/GardnerTest";
 
 // Admin pages
 import AdminIndex from "./pages/admin/AdminIndex";
@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminResults from "./pages/admin/AdminResults";
 import AdminResultDetail from "./pages/admin/AdminResultDetail";
 import AdminLayout from "./components/admin/AdminLayout";
+import AllResults from "./pages/AllResults";
 
 const queryClient = new QueryClient();
 
@@ -32,8 +33,9 @@ const App = () => (
           
           {/* Assessment Routes */}
           <Route path="/riasec" element={<RiasecTest />} />
-          <Route path="/gardner" element={<GardnerTest />} />
           <Route path="/aptitude-matrix" element={<AptitudeMatrix />} />
+          <Route path="/gardner" element={<GardnerTest />} />
+          <Route path="/all-results" element={<AllResults />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminIndex />} />

@@ -1,19 +1,62 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RiasecTest from "@/components/RiasecTest";
 import RiasecResults from "@/components/RiasecResults";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const RiasecPage = () => {
   const [testCompleted, setTestCompleted] = useState(false);
   const [riasecCode, setRiasecCode] = useState("");
   const [scores, setScores] = useState<Record<string, number>>({});
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    // Check if MBTI was completed
+    const allResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+    const mbtiCompleted = allResults.some((r: any) => r.testType === 'mbti');
+    
+    if (!mbtiCompleted) {
+      toast({
+        title: "Test Sequence Required",
+        description: "Please complete the MBTI test first.",
+        variant: "destructive"
+      });
+      navigate('/');
+      return;
+    }
+    
+    // Check if RIASEC was already completed
+    const riasecCompleted = allResults.some((r: any) => r.testType === 'riasec');
+    if (riasecCompleted) {
+      const riasecResult = allResults.find((r: any) => r.testType === 'riasec');
+      if (riasecResult) {
+        setRiasecCode(riasecResult.data.code);
+        setScores(riasecResult.data.scores);
+        setTestCompleted(true);
+      }
+    }
+  }, [navigate, toast]);
 
   const handleCompleteTest = (code: string, testScores: Record<string, number>) => {
     setRiasecCode(code);
     setScores(testScores);
     setTestCompleted(true);
+    
+    // Save RIASEC results to localStorage
+    const existingResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+    const riasecResults = {
+      testType: 'riasec',
+      timestamp: new Date().toISOString(),
+      data: {
+        code,
+        scores: testScores
+      }
+    };
+    
+    localStorage.setItem('testResults', JSON.stringify([...existingResults, riasecResults]));
   };
 
   const handleRetakeTest = () => {
@@ -35,11 +78,21 @@ const RiasecPage = () => {
         {!testCompleted ? (
           <RiasecTest onCompleteTest={handleCompleteTest} />
         ) : (
-          <RiasecResults 
-            code={riasecCode}
-            scores={scores}
-            onRetakeTest={handleRetakeTest}
-          />
+          <div className="space-y-6">
+            <RiasecResults 
+              code={riasecCode}
+              scores={scores}
+              onRetakeTest={handleRetakeTest}
+            />
+            
+            <div className="flex justify-center mt-8">
+              <Link to="/aptitude-matrix">
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                  Continue to Aptitude Matrix
+                </Button>
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>
