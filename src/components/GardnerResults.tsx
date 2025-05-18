@@ -36,7 +36,7 @@ const GardnerResults = ({ scores, onRetakeTest }: GardnerResultsProps) => {
   return (
     <div className="space-y-6">
       <Card className="border-none shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-black to-gray-800 p-6 text-white">
+        <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
           <h1 className="text-3xl font-bold">Your Multiple Intelligences Profile</h1>
           <div className="mt-4">
             <p className="text-xl font-medium">
@@ -107,11 +107,11 @@ const GardnerResults = ({ scores, onRetakeTest }: GardnerResultsProps) => {
             Take Test Again
           </Button>
           
-          <Link to="/all-results">
+          <Link to="/aptitude-matrix">
             <Button
-              className="bg-black hover:bg-gray-800 text-white"
+              className="bg-amber-600 hover:bg-amber-700"
             >
-              View All Results
+              Continue to Aptitude Matrix
             </Button>
           </Link>
         </CardFooter>

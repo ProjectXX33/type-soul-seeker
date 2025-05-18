@@ -4,8 +4,7 @@ import RiasecTest from "@/components/RiasecTest";
 import RiasecResults from "@/components/RiasecResults";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 const RiasecPage = () => {
   const [testCompleted, setTestCompleted] = useState(false);
@@ -58,11 +57,6 @@ const RiasecPage = () => {
     };
     
     localStorage.setItem('testResults', JSON.stringify([...existingResults, riasecResults]));
-    
-    toast({
-      title: "RIASEC Assessment Complete",
-      description: "Continue to the next assessment in the sequence.",
-    });
   };
 
   const handleRetakeTest = () => {
@@ -74,43 +68,30 @@ const RiasecPage = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Link to="/">
-            <Button variant="outline" className="text-black border-black hover:bg-zinc-100">
+            <Button variant="outline" className="text-blue-600">
               &larr; Back to Home
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-black">RIASEC Career Interest Assessment</h1>
+          <h1 className="text-2xl font-bold text-blue-800">RIASEC Career Interest Assessment</h1>
         </div>
 
         {!testCompleted ? (
           <RiasecTest onCompleteTest={handleCompleteTest} />
         ) : (
           <div className="space-y-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <h2 className="text-xl font-semibold text-black">RIASEC Assessment Complete</h2>
-                  <p className="text-gray-600">Your career code is <strong>{riasecCode}</strong>. Continue to the next assessment in the sequence.</p>
-                  
-                  <div className="flex justify-center mt-8">
-                    <Link to="/aptitude-matrix">
-                      <Button className="bg-black hover:bg-gray-800 text-white">
-                        Continue to Aptitude Matrix
-                      </Button>
-                    </Link>
-                  </div>
-
-                  <div className="mt-4">
-                    <Button
-                      onClick={handleRetakeTest}
-                      variant="outline"
-                      className="text-black border-black hover:bg-gray-100"
-                    >
-                      Take Test Again
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <RiasecResults 
+              code={riasecCode}
+              scores={scores}
+              onRetakeTest={handleRetakeTest}
+            />
+            
+            <div className="flex justify-center mt-8">
+              <Link to="/aptitude-matrix">
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                  Continue to Aptitude Matrix
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </div>
