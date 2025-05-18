@@ -1,14 +1,14 @@
 
 import { useState, useEffect } from "react";
-import GardnerTest from "@/components/GardnerTest";
-import GardnerResults from "@/components/GardnerResults";
+import ValuesTest from "@/components/ValuesTest";
+import ValuesResults from "@/components/ValuesResults";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-const GardnerPage = () => {
+const ValuesPage = () => {
   const [testCompleted, setTestCompleted] = useState(false);
-  const [results, setResults] = useState<Record<string, number>>({});
+  const [rankings, setRankings] = useState<Record<number, number>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -18,18 +18,15 @@ const GardnerPage = () => {
     const mbtiCompleted = allResults.some((r: any) => r.testType === 'mbti');
     const riasecCompleted = allResults.some((r: any) => r.testType === 'riasec');
     const aptitudeCompleted = allResults.some((r: any) => r.testType === 'aptitude');
-    const valuesCompleted = allResults.some((r: any) => r.testType === 'values');
     
-    if (!mbtiCompleted || !riasecCompleted || !aptitudeCompleted || !valuesCompleted) {
+    if (!mbtiCompleted || !riasecCompleted || !aptitudeCompleted) {
       toast({
         title: "Test Sequence Required",
         description: "Please complete the previous tests first.",
         variant: "destructive"
       });
       
-      if (!valuesCompleted && mbtiCompleted && riasecCompleted && aptitudeCompleted) {
-        navigate('/values');
-      } else if (!aptitudeCompleted && mbtiCompleted && riasecCompleted) {
+      if (!aptitudeCompleted && mbtiCompleted && riasecCompleted) {
         navigate('/aptitude-matrix');
       } else if (!riasecCompleted && mbtiCompleted) {
         navigate('/riasec');
@@ -39,32 +36,32 @@ const GardnerPage = () => {
       return;
     }
     
-    // Check if Gardner was already completed
-    const gardnerCompleted = allResults.some((r: any) => r.testType === 'gardner');
-    if (gardnerCompleted) {
-      const gardnerResult = allResults.find((r: any) => r.testType === 'gardner');
-      if (gardnerResult) {
-        setResults(gardnerResult.data.scores);
+    // Check if Values test was already completed
+    const valuesCompleted = allResults.some((r: any) => r.testType === 'values');
+    if (valuesCompleted) {
+      const valuesResult = allResults.find((r: any) => r.testType === 'values');
+      if (valuesResult) {
+        setRankings(valuesResult.data.rankings);
         setTestCompleted(true);
       }
     }
   }, [navigate, toast]);
 
-  const handleCompleteTest = (scores: Record<string, number>) => {
-    setResults(scores);
+  const handleCompleteTest = (results: Record<number, number>) => {
+    setRankings(results);
     setTestCompleted(true);
     
-    // Save Gardner results to localStorage
+    // Save Values results to localStorage
     const existingResults = JSON.parse(localStorage.getItem('testResults') || '[]');
-    const gardnerResults = {
-      testType: 'gardner',
+    const valuesResults = {
+      testType: 'values',
       timestamp: new Date().toISOString(),
       data: {
-        scores
+        rankings: results
       }
     };
     
-    localStorage.setItem('testResults', JSON.stringify([...existingResults, gardnerResults]));
+    localStorage.setItem('testResults', JSON.stringify([...existingResults, valuesResults]));
   };
 
   const handleRetakeTest = () => {
@@ -80,22 +77,22 @@ const GardnerPage = () => {
               &larr; Back to Aptitude Matrix
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-green-800">Gardner's Multiple Intelligences Assessment</h1>
+          <h1 className="text-2xl font-bold text-purple-800">Personal Values Assessment</h1>
         </div>
 
         {!testCompleted ? (
-          <GardnerTest onCompleteTest={handleCompleteTest} />
+          <ValuesTest onCompleteTest={handleCompleteTest} />
         ) : (
           <div className="space-y-6">
-            <GardnerResults 
-              scores={results}
+            <ValuesResults 
+              rankings={rankings}
               onRetakeTest={handleRetakeTest}
             />
             
             <div className="flex justify-center mt-8">
-              <Link to="/all-results">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                  View All Results
+              <Link to="/gardner">
+                <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  Continue to Gardner Test
                 </Button>
               </Link>
             </div>
@@ -106,4 +103,4 @@ const GardnerPage = () => {
   );
 };
 
-export default GardnerPage;
+export default ValuesPage;

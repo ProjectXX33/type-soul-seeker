@@ -20,6 +20,7 @@ const Index = () => {
     mbti: false,
     riasec: false,
     aptitude: false,
+    values: false,
     gardner: false
   });
 
@@ -31,6 +32,7 @@ const Index = () => {
       mbti: allResults.some((r: any) => r.testType === 'mbti'),
       riasec: allResults.some((r: any) => r.testType === 'riasec'),
       aptitude: allResults.some((r: any) => r.testType === 'aptitude'),
+      values: allResults.some((r: any) => r.testType === 'values'),
       gardner: allResults.some((r: any) => r.testType === 'gardner')
     });
     
@@ -79,7 +81,7 @@ const Index = () => {
   };
 
   const allTestsComplete = testsCompleted.mbti && testsCompleted.riasec && 
-                          testsCompleted.aptitude && testsCompleted.gardner;
+                          testsCompleted.aptitude && testsCompleted.values && testsCompleted.gardner;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -150,16 +152,30 @@ const Index = () => {
                     </Button>
                   </Link>
                 </div>
+
+                <div className="bg-purple-50 p-6 rounded-xl shadow-sm border border-purple-100">
+                  <h3 className="text-xl font-semibold text-purple-800 mb-2">Step 4: Values Assessment</h3>
+                  <p className="text-gray-600 mb-4">Identify your core personal values to better understand what truly matters to you.</p>
+                  <Link to="/values">
+                    <Button 
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+                      disabled={!testsCompleted.mbti || !testsCompleted.riasec || !testsCompleted.aptitude}
+                    >
+                      {testsCompleted.mbti && testsCompleted.riasec && testsCompleted.aptitude ? 
+                        "Continue to Values Assessment" : "Complete Previous Tests First"}
+                    </Button>
+                  </Link>
+                </div>
                 
                 <div className="bg-green-50 p-6 rounded-xl shadow-sm border border-green-100">
-                  <h3 className="text-xl font-semibold text-green-800 mb-2">Step 4: Multiple Intelligences</h3>
+                  <h3 className="text-xl font-semibold text-green-800 mb-2">Step 5: Multiple Intelligences</h3>
                   <p className="text-gray-600 mb-4">Explore Gardner's theory of multiple intelligences and discover your unique strengths.</p>
                   <Link to="/gardner">
                     <Button 
                       className="bg-green-600 hover:bg-green-700 text-white px-6"
-                      disabled={!testsCompleted.mbti || !testsCompleted.riasec || !testsCompleted.aptitude}
+                      disabled={!testsCompleted.mbti || !testsCompleted.riasec || !testsCompleted.aptitude || !testsCompleted.values}
                     >
-                      {testsCompleted.mbti && testsCompleted.riasec && testsCompleted.aptitude ? 
+                      {testsCompleted.mbti && testsCompleted.riasec && testsCompleted.aptitude && testsCompleted.values ? 
                         "Continue to MI Test" : "Complete Previous Tests First"}
                     </Button>
                   </Link>

@@ -3,7 +3,7 @@ import AptitudeMatrixComponent from "@/components/AptitudeMatrix";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const AptitudeMatrixPage = () => {
   const navigate = useNavigate();
@@ -44,6 +44,14 @@ const AptitudeMatrixPage = () => {
         </div>
 
         <AptitudeMatrixComponent />
+
+        <div className="flex justify-center mt-8">
+          <Link to="/values">
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              Continue to Values Assessment
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

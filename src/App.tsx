@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 // Test Pages
 import RiasecTest from "./pages/RiasecTest";
 import AptitudeMatrix from "./pages/AptitudeMatrix";
+import ValuesTest from "./pages/ValuesTest";
 import GardnerTest from "./pages/GardnerTest";
 
 // Admin pages
@@ -34,6 +35,7 @@ const App = () => (
           {/* Assessment Routes */}
           <Route path="/riasec" element={<RiasecTest />} />
           <Route path="/aptitude-matrix" element={<AptitudeMatrix />} />
+          <Route path="/values" element={<ValuesTest />} />
           <Route path="/gardner" element={<GardnerTest />} />
           <Route path="/all-results" element={<AllResults />} />
           
