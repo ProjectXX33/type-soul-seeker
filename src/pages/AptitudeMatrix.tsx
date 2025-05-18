@@ -32,22 +32,22 @@ const AptitudeMatrixPage = () => {
   }, [navigate, toast]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Link to="/riasec">
-            <Button variant="outline" className="text-blue-600">
+            <Button variant="outline" className="text-black border-black hover:bg-zinc-100">
               &larr; Back to RIASEC
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-amber-800">Aptitude Matrix Assessment</h1>
+          <h1 className="text-2xl font-bold text-black">Aptitude Matrix Assessment</h1>
         </div>
 
         <AptitudeMatrixComponent />
 
         <div className="flex justify-center mt-8">
           <Link to="/values">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+            <Button className="bg-black hover:bg-zinc-800 text-white">
               Continue to Values Assessment
             </Button>
           </Link>

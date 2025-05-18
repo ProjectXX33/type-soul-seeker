@@ -32,7 +32,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           
-          {/* Assessment Routes */}
+          {/* Assessment Routes - In the correct order: MBTI, RIASEC, Aptitude, Values, Gardner */}
           <Route path="/riasec" element={<RiasecTest />} />
           <Route path="/aptitude-matrix" element={<AptitudeMatrix />} />
           <Route path="/values" element={<ValuesTest />} />
